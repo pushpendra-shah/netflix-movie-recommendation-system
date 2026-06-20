@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Movie Recommender - Netflix Premium</title>
+    <style>
+        /* CSS Styling - Ultra Modern Premium Netflix Theme */
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            /* Netflix original background with an overlay dark gradient */
+            background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.90)), 
+                        url('https://assets.nflxext.com/ffe/siteui/vlv3/7ca5b0b9-1307-4241-aea3-bcbd924235f4/1366d21d-937b-402c-afdf-a6ca9f0761e0/IN-en-20240326-popsignuptwoweeks-perspective_alpha_website_large.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            /* Glassmorphism Effect: Semi-transparent background with blur */
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+            width: 100%;
+            max-width: 520px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #E50914; /* Netflix Signature Red */
+            margin-bottom: 8px;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .sub-heading {
+            color: #cccccc;
+            margin-bottom: 30px;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background-color: rgba(45, 45, 45, 0.9);
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ffffff;
+            background-color: #444;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+        }
+
+        button {
+            width: 100%;
+            background-color: #E50914;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+        }
+
+        button:hover {
+            background-color: #b20710;
+            transform: scale(1.01);
+            box-shadow: 0 6px 16px rgba(229, 9, 20, 0.5);
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        #results {
+            margin-top: 35px;
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Custom Scrollbar for Results */
+        #results::-webkit-scrollbar {
+            width: 6px;
+        }
+        #results::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        #results::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
+        }
+        #results::-webkit-scrollbar-thumb:hover {
+            background: #E50914;
+        }
+
+        .result-title {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #E50914;
+            padding-bottom: 6px;
+            display: inline-block;
+        }
+        
+        .searched-text {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .movie-card {
+            background: rgba(30, 30, 30, 0.85);
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            border-left: 5px solid #E50914;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .movie-card:hover {
+            transform: translateX(6px);
+            background: rgba(40, 40, 40, 0.95);
+            border-left-color: #ffffff;
+        }
+
+        .movie-icon {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .error-msg {
+            color: #ff4d4d;
+            background: rgba(255, 77, 77, 0.15);
+            padding: 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 77, 77, 0.3);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .loader {
+            color: #E50914;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🎬 NETFLIX AI</h1>
+        <p class="sub-heading">Apni pasand ki movie ya show likhein, AI aapko best recommendations dega</p>
+        
+        <div class="input-group">
+            <input type="text" id="movieInput" placeholder="e.g., Stranger Things, Peaky Blinders, Inception...">
+        </div>
+        <button onclick="getRecommendations()">Recommend Movies</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Enter key se bhi search chal sake uske liye listener
+        document.getElementById("movieInput").addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                getRecommendations();
+            }
+        });
+
+        async function getRecommendations() {
+            const movieInput = document.getElementById('movieInput');
+            const movieName = movieInput.value.trim();
+            const resultsDiv = document.getElementById('results');
+            
+            if (!movieName) {
+                resultsDiv.innerHTML = '<p class="error-msg">⚠️ Kripya pehle kisi movie ya show ka naam likhein!</p>';
+                return;
+            }
+
+            // Loader animation style text
+            resultsDiv.innerHTML = '<div class="loader">🔴 Searching best recommendations for you...</div>';
+
+            try {
+                // FastAPI `/recommend` endpoint par request
+                const response = await fetch(`/recommend?movie_name=${encodeURIComponent(movieName)}`);
+                const data = await response.json();
+
+                if (data.recommendations) {
+                    let htmlContent = `
+                        <div class="result-title">🍿 Aapke Liye Recommendations:</div>
+                        <div class="searched-text">Matched for: "<strong>${data.searched_movie}</strong>"</div>
+                    `;
+                    
+                    data.recommendations.forEach(movie => {
+                        htmlContent += `
+                            <div class="movie-card">
+                                <span class="movie-icon">▶️</span>
+                                <span>${movie}</span>
+                            </div>
+                        `;
+                    });
+                    resultsDiv.innerHTML = htmlContent;
+                } else {
+                    resultsDiv.innerHTML = `<p class="error-msg">❌ ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p class="error-msg">📡 Backend server se connect nahi ho pa raha hai. Kripya check karein ki FastAPI server chal raha hai ya nahi.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
