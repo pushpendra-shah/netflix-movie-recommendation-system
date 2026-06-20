@@ -4,17 +4,17 @@ A movie recommendation web app I built using FastAPI. You type in a movie name a
 
 I went with a content-based approach for this. The idea is pretty simple: I convert each movie's details into numbers using TF-IDF, and then use cosine similarity to find which movies are closest to the one you searched for. I also added fuzzy matching with difflib, so even if you type the movie name a little wrong, it still finds the right one.
 
-## What it does
+# What it does
 - Suggests similar movies for whatever title you search
 - Still works if you misspell the movie name
 - Uses TF-IDF and cosine similarity on the movie data
 - Saves the processed data with pickle so it responds quickly
 - Backend is built with FastAPI
 
-## Tech I used
+# Tech I used
 Python, FastAPI, Uvicorn, scikit-learn, Pandas, difflib, pickle
 
-## How to run it
+# How to run it
 
 Clone the repo:
 ```bash
@@ -34,12 +34,12 @@ uvicorn main:app --reload
 
 Then open http://localhost:8000 in your browser.
 
-## Files in this project
+# Files in this project
 - main.py - the FastAPI app and the recommendation logic
 - index.html - the frontend page
 - movie_dict.pkl - the saved movie data
 
-## Things I want to add later
+# Things I want to add later
 - Recommendations based on user ratings (collaborative filtering)
 - Movie posters using a public movie API
 - Deploy it online so there's a live demo link
